@@ -1,0 +1,151 @@
+docker pull nginx
+----
+echo "<h1>Welcome user, I'm Neksha Srinivas!</h1>" > index.html
+----
+mkdir mynginx
+-----
+move index.html mynginx\
+
+docker run -d --name mynginx -p 9090:80 -v %cd%\mynginx:/usr/share/nginx/html nginx
+
+docker rm -f mynginx
+
+docker run -d --name mynginx -p 9090:80 -v %cd%\mynginx:/usr/share/nginx/html nginx
+
+docker ps
+
+(check localhost : 9090)
+
+-------------------------------------AWS--web-----------------
+STEP 1 — Connect to EC2
+ssh -i examkey.pem ubuntu@<your-ec2-public-ip>
+STEP 2 — Install Needed Software
+sudo apt update
+sudo apt install docker.io -y
+sudo apt install git -y
+sudo apt install nano -y
+STEP 3 — Clone Your GitHub Repository
+git clone <your-github-repo-url>
+cd <repo-folder-name>
+STEP 4 — Create Dockerfile
+nano Dockerfile
+FROM nginx:latest
+COPY index.html /usr/share/nginx/html/
+CTRL + O → ENTER → CTRL + X
+STEP 5 — Build Docker Image
+sudo docker build -t simple-web .
+sudo docker images
+STEP 6 — Run Docker Container
+sudo docker run -d --name web-demo -p 80:80 simple-web
+STEP 7 — Test Website
+http://<your-ec2-public-ip>
+-------------------------------Jenkins script java------
+pipeline {
+    agent any
+    tools {
+        maven 'MAVEN_HOME'
+    }
+    stages {
+        stage('Checkout & Clean') {
+            steps {
+                cleanWs()
+                git url: 'https://github.com/Rajeswariperam/week4maven-1.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                // Run mvn commands from root, no subdirectory change
+                bat "mvn clean install"
+            }
+        }
+        stage('Test') {
+            steps {
+                bat "mvn test"
+            }
+        }
+        stage('Package') {
+            steps {
+                bat "mvn package"
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Build completed successfully!'
+            archiveArtifacts 'target/*.jar'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}
+---------------Jenkins script web ---------------
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/lohithak28/week9maven-1.git'
+            }
+        }
+
+        stage('Build WAR') {
+            steps {
+                bat "mvn clean package"
+            }
+        }
+
+        stage('Archive WAR') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                bat '''
+                    copy target\\*.war C:\\tomcat9\\webapps\\ /Y
+                    net stop "Tomcat9"
+                    net start "Tomcat9"
+                '''
+            }
+        }
+    }
+}
+-------------------app password-------------------------------------
+vcpi pngm moqj ygss
+------------------------------------minikube--------------------------------------------
+minikube start --driver=docker
+minikube status
+kubectl config use-context minikube
+kubectl get nodes
+kubectl create deployment mynginx --image=nginx
+kubectl get deployments
+kubectl get pods
+kubectl expose deployment mynginx --type=NodePort --port=80 --target-port=80
+kubectl get services
+kubectl scale deployment mynginx --replicas=4
+kubectl get pods
+minikube service mynginx --url
+---------------------------nagios---------------------------
+docker --version
+docker ps
+
+docker pull jasonrivers/nagios:latest
+
+docker run --name nagiosdemo -p 8888:80 jasonrivers/nagios:latest
+
+# Access: http://localhost:8888
+
+# Login: nagiosadmin / nagios
+
+docker stop nagiosdemo
+docker rm nagiosdemo
+
+docker rmi jasonrivers/nagios:latest
+
+
+
+
