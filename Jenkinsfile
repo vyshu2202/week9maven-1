@@ -1,13 +1,13 @@
 pipeline {
     agent any
     tools {
-        maven 'MAVEN'
+        maven 'MAVEN_HOME'
     }
     stages {
         stage('Checkout & Clean') {
             steps {
                 cleanWs()
-                git url: 'https://github.com/Rajeswariperam/week4maven-1.git'
+                git url: 'https://github.com/vyshu2202/week9maven-1.git'
             }
         }
         stage('Build') {
