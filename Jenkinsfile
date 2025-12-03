@@ -37,4 +37,38 @@ pipeline {
         }
     }
 }
+------------------web -----------------------
+    pipeline {
+    agent any
 
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/lohithak28/week9maven-1.git'
+            }
+        }
+
+        stage('Build WAR') {
+            steps {
+                bat "mvn clean package"
+            }
+        }
+
+        stage('Archive WAR') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                bat '''
+                    copy target\\*.war C:\\tomcat9\\webapps\\ /Y
+                    net stop "Tomcat9"
+                    net start "Tomcat9"
+                '''
+            }
+        }
+    }
+}
